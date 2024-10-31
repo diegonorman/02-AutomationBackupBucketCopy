@@ -1,10 +1,9 @@
-// variables.tf
-variable "aws_s3_bucket" {
+variable "bucket_name" {
   description = "Nome do bucket S3 para Terraform"
   type        = string
 }
 
-variable "aws_s3_bucket_bk" {
+variable "bucket_name_bk" {
   description = "Nome do bucket S3 para backup"
   type        = string
 }

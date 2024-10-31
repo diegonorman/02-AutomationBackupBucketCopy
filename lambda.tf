@@ -9,7 +9,7 @@ resource "aws_lambda_function" "s3_copy" {
 
   environment {
     variables = {
-      BACKUP_BUCKET = aws_s3_bucket.backup_bucket.bucket
+      BACKUP_BUCKET = aws_s3_bucket.backup_bucket.id
     }
   }
 }
