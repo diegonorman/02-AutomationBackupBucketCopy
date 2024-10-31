@@ -36,7 +36,7 @@ jobs:
       - name: Setup Terraform
         uses: hashicorp/setup-terraform@v3
         with:
-          terraform_version: 1.9.3
+          terraform_version: 1.9.3  # Verifique se esta é a versão correta
 
       - name: Configure AWS credentials
         uses: aws-actions/configure-aws-credentials@v4
@@ -48,13 +48,12 @@ jobs:
       - name: Read destroy configuration
         id: read-destroy-config
         run: |
-          # Lê o arquivo JSON e define a variável de saída 'destroy'
           DESTROY=$(jq -r '.["${{ inputs.environment }}"]' ./destroy_config.json)
           echo "destroy=$DESTROY" >> $GITHUB_OUTPUT    
 
       - name: Terraform Init
         run: |
-          set -e # Para falhar rapidamente em caso de erro
+          set -e
           terraform init \
             -backend-config="bucket=${{ inputs.aws-statefile-s3-bucket }}" \
             -backend-config="key=${{ github.event.repository.name }}" \
@@ -63,7 +62,7 @@ jobs:
 
       - name: Terraform Validate
         run: |
-          set -e # Para falhar rapidamente em caso de erro
+          set -e
           terraform validate
 
       - name: Terraform Destroy 
@@ -78,7 +77,7 @@ jobs:
         id: terraform-plan
         run: |
           terraform workspace select ${{ inputs.environment }} || terraform workspace new ${{ inputs.environment }}
-          terraform plan -var-file="./envs/${{ inputs.environment }}/terraform.tfvars" -auto-approve
+          terraform plan -var-file="./envs/${{ inputs.environment }}/terraform.tfvars"
 
       - name: Terraform Apply
         if: steps.read-destroy-config.outputs.destroy != 'true'
