@@ -3,7 +3,7 @@
 Este projeto Terraform automatiza a criação de recursos na AWS, incluindo buckets S3 e funções Lambda. Ele é configurado para facilitar o gerenciamento de dados e realizar cópias de segurança automaticamente.
 
 ## Case de uso
-- Podemos usar em casos de multi-account ou até mesmo para transferir para outra região.
+- Podemos usar em casos de multi-account ou até mesmo para transferir para outra região
 
 ## Estrutura do Projeto
 
