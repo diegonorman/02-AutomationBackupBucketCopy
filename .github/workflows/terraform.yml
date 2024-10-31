@@ -25,7 +25,6 @@ jobs:
     defaults:
       run:
         shell: bash
-    timeout-minutes: 5
 
     steps:
       - name: Checkout code
@@ -37,7 +36,7 @@ jobs:
       - name: Setup Terraform
         uses: hashicorp/setup-terraform@v3
         with:
-          terraform_version: 1.9.3  # Verifique se esta é a versão correta
+          terraform_version: 1.9.3
 
       - name: Configure AWS credentials
         uses: aws-actions/configure-aws-credentials@v4
@@ -49,12 +48,13 @@ jobs:
       - name: Read destroy configuration
         id: read-destroy-config
         run: |
+          # Lê o arquivo JSON e define a variável de saída 'destroy'
           DESTROY=$(jq -r '.["${{ inputs.environment }}"]' ./destroy_config.json)
           echo "destroy=$DESTROY" >> $GITHUB_OUTPUT    
 
       - name: Terraform Init
         run: |
-          set -e
+          set -e # Para falhar rapidamente em caso de erro
           terraform init \
             -backend-config="bucket=${{ inputs.aws-statefile-s3-bucket }}" \
             -backend-config="key=${{ github.event.repository.name }}" \
@@ -63,7 +63,7 @@ jobs:
 
       - name: Terraform Validate
         run: |
-          set -e
+          set -e # Para falhar rapidamente em caso de erro
           terraform validate
 
       - name: Terraform Destroy 
@@ -78,10 +78,18 @@ jobs:
         id: terraform-plan
         run: |
           terraform workspace select ${{ inputs.environment }} || terraform workspace new ${{ inputs.environment }}
-          terraform plan -var-file="./envs/${{ inputs.environment }}/terraform.tfvars"
+          terraform plan -var-file="./envs/${{ inputs.environment }}/terraform.tfvars" -auto-approve
 
       - name: Terraform Apply
         if: steps.read-destroy-config.outputs.destroy != 'true'
         id: terraform-apply
         run: |
-          terraform apply -auto-approve
+          # Ativando o log de depuração do Terraform
+          export TF_LOG=DEBUG
+          export TF_LOG_PATH=terraform.log
+
+          # Executa o apply e verifica o status
+          terraform apply -auto-approve || { echo "Terraform apply failed. Check terraform.log for details."; exit 1; }
+
+          # Se o apply for bem-sucedido, opcionalmente, você pode desativar o log
+          unset TF_LOG

@@ -1,6 +1,6 @@
 resource "aws_s3_bucket" "main_bucket" {
-  bucket = var.bucket_name
+  bucket = var.aws_s3_bucket
 }
 resource "aws_s3_bucket" "backup_bucket" {
-  bucket = var.bucket_name_bk
+  bucket = var.aws_s3_bucket_bk
 }
