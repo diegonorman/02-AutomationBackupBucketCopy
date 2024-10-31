@@ -89,3 +89,4 @@ jobs:
           terraform apply -var-file="./envs/${{ inputs.environment }}/terraform.tfvars" -auto-approve || { echo "Terraform apply failed. Check terraform.log for details."; exit 1; }
 
           unset TF_LOG
+          
