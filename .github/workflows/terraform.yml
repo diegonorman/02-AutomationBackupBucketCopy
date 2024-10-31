@@ -83,10 +83,4 @@ jobs:
         if: steps.read-destroy-config.outputs.destroy != 'true'
         id: terraform-apply
         run: |
-          export TF_LOG=DEBUG
-          export TF_LOG_PATH=terraform.log
-
-          terraform apply -var-file="./envs/${{ inputs.environment }}/terraform.tfvars" -auto-approve || { echo "Terraform apply failed. Check terraform.log for details."; exit 1; }
-
-          unset TF_LOG
-          
+          terraform apply -var-file="./envs/${{ inputs.environment }}/terraform.tfvars" -auto-approve
